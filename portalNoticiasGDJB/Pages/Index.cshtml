@@ -1,10 +1,67 @@
 ﻿@page
 @model IndexModel
+
 @{
-    ViewData["Title"] = "Home page";
+    ViewBag.Title = "Inicio";
+    Layout = "_Layout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="contenedor1">
+    <h1>Últimas Noticias</h1>
+    <div class="noticia-principal">
+
+        <img src="https://conecta.tec.mx/sites/default/files/styles/header_full/public/2025-01/segundo-mandato-donald-trump.jpg.webp?itok=hXpOtxbk" alt="Deporte" width="900">
+        <h2>
+            <a asp-page="/Index1" class="text-decoration-none text-dark">
+
+                Esto es lo que se encarecerá con los aranceles del 25% sobre las mercancías mexicanas y canadienses
+            </a>
+        </h2>
+    </div>
+
+    <div class="row">
+
+        <h2>Te puede interesar...</h2>
+        <div class="col-md-6 news-card">
+            <img src="~/img/noticia1clima.jpg" alt="Noticia 2">
+            <h2>
+                <a asp-page="/Noticia2" class="text-decoration-none text-dark">
+                    Primera tormenta invernal obliga a rescates acuáticos, corta la electricidad y crea peligrosas condiciones de viaje
+                </a>
+            </h2>
+        </div>
+
+        <div class="col-md-6 news-card">
+            <img src="~/img/Forza horizon.png" alt="Noticia 3">
+            <h2>Microsoft anunció que Forza Horizon 5, uno de los juegos más emblemáticos de Xbox, llegará a PlayStation 5 en 2025.</p>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-6 news-card">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8xcIuknfW7S17DJH3GIer71ef8N0wt_PaQw&s" alt="Noticia 4">
+            <h2>
+                <a asp-page="/Index2" class="text-decoration-none text-dark">
+                    Rayados oficializa el fichaje de Sergio Ramos
+                </a>
+            </h2>
+        </div>
+
+        <div class="col-md-6 news-card">
+            <img src="~/img/gomas.png" alt="Noticia 5">
+            <h2>FDA prohíbe el colorante rojo número 3 en alimentos, bebidas y medicamentos; en estudios se le ha vinculado con cáncer</h2>
+
+        </div>
+    </div>
+
+    <div class="noticia-final">
+        <img src="~/img/iceberg.png" alt="Noticia 6">
+        <h2>
+            <a asp-page="/Noticia3" class="text-decoration-none text-dark">Temores de que el iceberg más grande del mundo pueda chocar contra una isla del Atlántico Sur</a>
+
+        </h2>
+    </div>
+
 </div>
