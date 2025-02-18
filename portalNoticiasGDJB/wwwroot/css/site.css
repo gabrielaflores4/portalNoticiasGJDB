@@ -18,7 +18,7 @@ body {
 
 .contenedor {
     max-width: 900px;
-    margin: 20px auto;
+    margin: 0 auto;
     padding: 20px;
     background: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -284,6 +284,7 @@ body {
     margin-bottom: 0px;
     padding: 20px;
     border-bottom: 2px solid #ddd;
+    text-align: justify;
 }
 
 .titulo-principal {
@@ -305,12 +306,14 @@ body {
     line-height: 1.6;
     color: #555;
     text-align: justify;
+    padding: 10px;
+    margin: 0px;
 }
 
 .imagen-principal, .imagen-secundaria {
     width: 100%;
     border-radius: 8px;
-    margin: 15px 0;
+    margin-bottom: 15px;
 }
 
 .cita {
@@ -400,7 +403,7 @@ footer {
 
 .ticker-content {
     display: inline-block;
-    animation: scroll-left 15s linear infinite;
+    animation: scroll-left 20s linear infinite;
     justify-content: center;
     align-items: center;
     text-align: center;
@@ -415,3 +418,4 @@ footer {
         transform: translateX(-100%);
     }
 }
+
