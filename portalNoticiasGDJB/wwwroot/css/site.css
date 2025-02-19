@@ -108,8 +108,8 @@ body {
 
 .navbar .login-icon img {
     width: 30px;
-    height: 30px;
-    transition: transform 0.3s ease-in-out;
+    height:30px;
+    transition: transform 0.3s ease-in-out
 }
 
 .navbar .login-icon img:hover {
