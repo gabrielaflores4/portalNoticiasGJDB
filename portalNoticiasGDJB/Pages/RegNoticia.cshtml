@@ -1,0 +1,32 @@
+﻿@page
+@model portalNoticiasGDJB.Pages.RegNoticiaModel
+@{
+
+    ViewData["Title"] = "Registrar Noticia";
+}
+
+<h1>Registrar Noticia</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="Titulo" class="form-label">Título de la Noticia</label>
+        <input type="text" class="form-control" id="Titulo" name="Titulo" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="Imagen" class="form-label">Imagen de la Noticia</label>
+        <input type="file" class="form-control" id="Imagen" name="Imagen" accept="image/*" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="Contenido" class="form-label">Contenido de la Noticia</label>
+        <textarea class="form-control" id="Contenido" name="Contenido" rows="5" required></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label for="FechaPublicacion" class="form-label">Fecha de Publicación</label>
+        <input type="date" class="form-control" id="FechaPublicacion" name="FechaPublicacion" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Noticia</button>
+</form>
