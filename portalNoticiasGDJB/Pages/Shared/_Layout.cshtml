@@ -36,8 +36,16 @@
             <a asp-page="/login">
                 <img src="~/img/perfil.png" alt="Perfil">
             </a>
+ 
+            <img class="opciones img-fluid" src="~/img/marcador.png" alt="Opciones" onclick="toggleMenu()">
+
+
+            <div id="fav" class="dropdown-fav">
+                <a href="#">⭐favoritas</a>
+                
+
+            </div>
         </div>
-        
     </nav>
 
     <div class="container">
@@ -62,5 +70,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="~/js/noticiafavv.js"></script>
 </body>
 </html>
+
