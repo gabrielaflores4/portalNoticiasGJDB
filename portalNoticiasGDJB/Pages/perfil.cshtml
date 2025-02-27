@@ -24,7 +24,13 @@
         </div>
     </div>
 
+
+
     <div class="contenido-perfil">
+        <h2>Tus Publicaciones</h2>
+        <div id="noticias-perfil" class="grid-noticias">
+            <!-- Aquí se cargarán las noticias desde localStorage -->
+        </div>
         <h2>Publicaciones</h2>
         <hr>
         <div class="cont-public">
@@ -51,3 +57,15 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/Noticias.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Cargar noticias en el perfil del usuario con el botón de eliminar
+            if (document.getElementById('noticias-perfil')) {
+                cargarNoticias('noticias-perfil', true);
+            }
+        });
+    </script>
+}
