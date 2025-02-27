@@ -17,6 +17,7 @@
             height: 100vh;
             background-color: #f4f4f4;
         }
+
         .container {
             background: white;
             padding: 20px;
@@ -27,8 +28,8 @@
             max-width: 800px;
             width: 100%;
             margin: auto;
-            
         }
+
         input {
             width: 100%;
             padding: 10px;
@@ -36,6 +37,7 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         .btn {
             background-color: #0F2A1D;
             color: white;
@@ -51,37 +53,43 @@
             border-color: #0F2A1D !important;
         }
 
-        .btn-custom:hover {
+            .btn-custom:hover {
                 background-color: #6B9071 !important;
-        }
+            }
 
         .btn:hover {
             background-color: #6B9071;
         }
+
         .link {
             margin-top: 10px;
         }
-        .link a {
-            color: #6B9071;
-            text-decoration: none;
-        }
-        .link a:hover {
-            text-decoration: underline;
-        }
+
+            .link a {
+                color: #6B9071;
+                text-decoration: none;
+            }
+
+                .link a:hover {
+                    text-decoration: underline;
+                }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Iniciar Sesión</h2>
-        <form method="get" asp-page="/perfil">
-            <input type="text" placeholder="Usuario">
-            <input type="password" placeholder="Contraseña">
+        <form id="loginForm" method="POST" asp-page="/perfil" onsubmit="return validarLoginForm(event)">
+            <input type="text" id="usuario" name="usuario" placeholder="Usuario">
+            <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña">
             <button type="submit" class="btn">Entrar</button>
         </form>
         <div class="link">
             <p>¿No tienes una cuenta? <a asp-page="/SignUp">Regístrate aquí</a></p>
         </div>
     </div>
+    <script src="~/js/validaciones.js"></script>
+    <script src="~/js/roles.js"></script>
+
 </body>
 </html>
 
