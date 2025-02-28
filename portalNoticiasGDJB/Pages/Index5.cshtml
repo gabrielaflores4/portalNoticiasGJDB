@@ -2,11 +2,17 @@
 @model portalNoticiasGDJB.Pages.Index5Model
 @{
 }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Temores de que el iceberg más grande del mundo! pueda chocar contra una isla del Atlántico Sur.</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body style ="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
 <div class="contenedor">
     <div class="noticia">
-        <h1 class="titulo-principal" style="text-align: center;">
-            Temores de que el iceberg más grande del mundo! pueda chocar contra una isla del Atlántico Sur.
-        </h1>
+       
         <img class="imagen-principal-noticiaA" src="~/img/iceberg.png" alt="Imagen destacada de la noticia" width="100%" style="display: block; margin: 0 auto;">
         <p></p>
         <p class="texto-principal" style="text-align: justify;">
@@ -40,3 +46,28 @@
         </p>
     </div>
 </div>
+    <!-- Reacciones de la noticia 1 -->
+    <div id="reactions-noticia5" class="news-reactions">
+        <!-- Las reacciones de la noticia 1 se cargarán aquí -->
+    </div>
+
+    <!-- Formulario para agregar un comentario -->
+    <div>
+        <label for="username-noticia5">Tu nombre: </label>
+        <input type="text" id="username-noticia5" placeholder="Ingresa tu nombre">
+        <br><br>
+        <label for="comment-text-noticia5">Tu comentario: </label>
+        <textarea id="comment-text-noticia5" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
+        <br><br>
+        <button onclick="addComment('noticia5')">Agregar Comentario</button>
+    </div>
+
+    <!-- Sección de comentarios -->
+    <div id="comments-section-noticia5" class="comments-section">
+        <!-- Los comentarios para la noticia 1 se cargarán aquí -->
+    </div>
+
+<script src="~/js/comentarios.js"></script>
+
+</body>
+</html>

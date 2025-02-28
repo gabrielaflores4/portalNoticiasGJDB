@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noticia: Aranceles del 25%</title>
+    <link rel="stylesheet" href="site.css">
 </head>
 <body style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
     <div class="contenedor">
@@ -52,5 +53,30 @@
             </p>
         </div>
     </div>
+    <!-- Reacciones de la noticia 1 -->
+    <div id="reactions-noticia1" class="news-reactions">
+        <!-- Las reacciones de la noticia 1 se cargarán aquí -->
+    </div>
+
+    <!-- Formulario para agregar un comentario -->
+    <div>
+        <label for="username-noticia1">Tu nombre: </label>
+        <input type="text" id="username-noticia1" placeholder="Ingresa tu nombre">
+        <br><br>
+        <label for="comment-text-noticia1">Tu comentario: </label>
+        <textarea id="comment-text-noticia1" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
+        <br><br>
+        <button onclick="addComment('noticia1')">Agregar Comentario</button>
+    </div>
+
+    <!-- Sección de comentarios -->
+    <div id="comments-section-noticia1" class="comments-section">
+        <!-- Los comentarios para la noticia 1 se cargarán aquí -->
+    </div>
+
+
+
+
+<script src="~/js/comentarios.js"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/portalNoticiasGDJB.styles.css" asp-append-version="true" />
+
 </head>
 <body>
     <nav class="navbar">
@@ -36,8 +37,14 @@
             <a asp-page="/login">
                 <img src="~/img/perfil.png" alt="Perfil">
             </a>
+ 
+            <img class="opciones img-fluid" src="~/img/marcador.png" alt="Opciones" onclick="toggleMenu()">
+
+
+            <div id="fav" class="dropdown-fav">
+                <a href="#">⭐favoritas</a>
+            </div>
         </div>
-        
     </nav>
 
     <div class="container">
@@ -62,5 +69,8 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script src="~/js/noticiafavv.js"></script>
 </body>
 </html>
+

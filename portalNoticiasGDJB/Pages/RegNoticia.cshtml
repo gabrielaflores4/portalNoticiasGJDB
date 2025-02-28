@@ -1,13 +1,15 @@
 ﻿@page
-@model portalNoticiasGDJB.Pages.RegNoticiaModel
+@model RegNoticiaModel
 @{
-
     ViewData["Title"] = "Registrar Noticia";
 }
 
 <h1>Registrar Noticia</h1>
 
-<form method="post" enctype="multipart/form-data">
+<!-- Área para mostrar mensajes -->
+<div id="mensaje" class="alert" style="display: none;"></div>
+
+<form id="noticiaForm" method="post" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="Titulo" class="form-label">Título de la Noticia</label>
         <input type="text" class="form-control" id="Titulo" name="Titulo" required>
@@ -30,3 +32,9 @@
 
     <button type="submit" class="btn btn-primary">Guardar Noticia</button>
 </form>
+
+@section Scripts {
+    <script src="~/js/Noticias.js"></script>
+
+}
+<script src="~/js/validaciones.js"></script>

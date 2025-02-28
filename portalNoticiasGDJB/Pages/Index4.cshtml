@@ -2,13 +2,18 @@
 @model portalNoticiasGDJB.Pages.Index4Model
 @{
 }
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>FDA prohíbe el colorante rojo pues en estudios se le ha vinculado con cáncer</title>
+    <link rel="stylesheet" href="site.css">
+</head>
+<body style ="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
 
 <div class="contenedor">
     <div class="noticia">
-        <h1 class="titulo-principal" style="text-align: center;">
-            FDA prohíbe el colorante rojo pues en estudios se le ha vinculado con cáncer
-
-        </h1>
+       
         <img class="imagen-principal" src="https://media.cnn.com/api/v1/images/stellar/prod/alimentos-rojo-fda.jpg?q=w_1160,c_fill/f_webp" alt="Imagen destacada de la noticia" width="100%" style="display: block; margin: 0 auto;">
 
         <p class="texto-principal" style="text-align: justify;">
@@ -56,5 +61,30 @@
             este aditivo y lean cuidadosamente las etiquetas para tomar decisiones informadas sobre su consumo.
         </p>
     </div>
-</div>
+    </div>
+    <!-- Reacciones de la noticia 1 -->
+    <div id="reactions-noticia4" class="news-reactions">
+        <!-- Las reacciones de la noticia 1 se cargarán aquí -->
+    </div>
+
+    <!-- Formulario para agregar un comentario -->
+    <div>
+        <label for="username-noticia4">Tu nombre: </label>
+        <input type="text" id="username-noticia4" placeholder="Ingresa tu nombre">
+        <br><br>
+        <label for="comment-text-noticia4">Tu comentario: </label>
+        <textarea id="comment-text-noticia4" rows="4" cols="50" placeholder="Escribe tu comentario aquí..."></textarea>
+        <br><br>
+        <button onclick="addComment('noticia4')">Agregar Comentario</button>
+    </div>
+
+    <!-- Sección de comentarios -->
+    <div id="comments-section-noticia4" class="comments-section">
+        <!-- Los comentarios para la noticia 1 se cargarán aquí -->
+    </div>
+    <script src="~/js/comentarios.js"></script>
+</body>
+</html>
+
+
 
