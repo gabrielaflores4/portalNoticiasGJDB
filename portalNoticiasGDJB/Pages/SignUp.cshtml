@@ -13,26 +13,36 @@
 <body class=" Rbody">
     <div class="Rcontainer">
         <h2>Registro de Usuario</h2>
-        <form method="post">
-            <label asp-for="Input.UserName">Nombre:</label>
-            <input asp-for="Input.UserName" />
+        <div class="Rcontainer">
+            <h2>@ViewData["Title"]</h2>
 
-            <label asp-for="Input.Email">Correo Electrónico:</label>
-            <input asp-for="Input.Email" />
+            <form method="post">
+                <!-- Resumen de errores generales -->
+                <div asp-validation-summary="All" class="text-danger"></div>
 
-            <label asp-for="Input.Password">Contraseña:</label>
-            <input asp-for="Input.Password" type="password" />
+                <label asp-for="Input.UserName">Nombre:</label>
+                <input asp-for="Input.UserName" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
 
-            <label asp-for="Input.ConfirmPassword">Confirmar Contraseña:</label>
-            <input asp-for="Input.ConfirmPassword" type="password" />
+                <label asp-for="Input.Email">Correo Electrónico:</label>
+                <input asp-for="Input.Email" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
 
-            <button type="submit" class="Rbtn">Registrarse</button>
-        </form>
-       
-        <div class="link">
-            <p>¿Ya tienes una cuenta? <a asp-page="/login">Inicia sesión aquí</a></p>
-        </div>
+                <label asp-for="Input.Password">Contraseña:</label>
+                <input asp-for="Input.Password" type="password" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                <label asp-for="Input.ConfirmPassword">Confirmar Contraseña:</label>
+                <input asp-for="Input.ConfirmPassword" type="password" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+                <button type="submit" class="Rbtn">Registrarse</button>
+            </form>
+
+            <div class="link">
+                <p>¿Ya tienes una cuenta? <a asp-page="/Login">Inicia sesión aquí</a></p>
+            </div>
     </div>
-    <script src="~/js/validaciones.js"></script>
+    
 </body>
 </html>

@@ -835,3 +835,149 @@ input {
         color: #333;
     }
 
+.gestion-title {
+    color: #0F2A1D;
+    text-align: center;
+    margin: 30px 0;
+    font-size: 2.2rem;
+}
+
+.table-container {
+    width: 95%;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-management-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 0.95em;
+    min-width: 800px;
+}
+
+    .user-management-table thead tr {
+        background-color: #0F2A1D;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .user-management-table th,
+    .user-management-table td {
+        padding: 14px 16px;
+        border: 1px solid #e0e0e0;
+        vertical-align: middle;
+    }
+
+    .user-management-table th {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    .user-management-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+        .user-management-table tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        .user-management-table tbody tr:hover {
+            background-color: #E3EED4;
+        }
+
+/* Formulario de acciones */
+.user-actions-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.role-select {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #d1d5db;
+    background-color: white;
+    font-family: inherit;
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+/* Botones - Tamaño consistente */
+.btn-asignar,
+.btn-eliminar {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    min-width: 120px;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-asignar {
+    background-color: #0F2A1D;
+    color: white;
+}
+
+    .btn-asignar:hover {
+        background-color: #2F4B38;
+        transform: translateY(-2px);
+    }
+
+.btn-eliminar {
+    background-color: #dc3545;
+    color: white;
+}
+
+    .btn-eliminar:hover {
+        background-color: #c82333;
+        transform: translateY(-2px);
+    }
+
+@media (max-width: 992px) {
+    .table-container {
+        width: 100%;
+        padding: 10px 5px;
+    }
+
+    .user-actions-form {
+        gap: 8px;
+    }
+
+    .btn-asignar,
+    .btn-eliminar {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .gestion-title {
+        font-size: 1.8rem;
+        margin: 20px 0;
+    }
+
+    .user-management-table th,
+    .user-management-table td {
+        padding: 10px 12px;
+    }
+
+    .user-actions-form {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .role-select {
+        width: 100%;
+    }
+}

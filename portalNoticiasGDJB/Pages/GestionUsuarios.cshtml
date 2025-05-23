@@ -1,0 +1,44 @@
+﻿@page
+@model portalNoticiasGDJB.Pages.GestionUsuariosModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+
+<h2 class="gestion-title">Gestión de Usuarios</h2>
+
+<div class="table-container">
+    <table class="user-management-table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@string.Join(", ", await UserManager.GetRolesAsync(user))</td>
+                    <td>
+                        <form method="post" class="user-actions-form">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <select name="role" class="role-select">
+                                @foreach (var role in Model.AllRoles)
+                                {
+                                    <option value="@role">@role</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn-asignar" formaction="?handler=AsignarRol">Asignar Rol</button>
+                            <button type="submit" class="btn-eliminar" formaction="?handler=EliminarUsuario"
+                                    onclick="return confirm('¿Seguro que quieres eliminar a este usuario?');">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

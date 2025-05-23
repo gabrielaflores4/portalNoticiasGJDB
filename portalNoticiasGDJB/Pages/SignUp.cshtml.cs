@@ -10,18 +10,21 @@ namespace portalNoticiasGDJB.Pages
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public SignUpModel(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        public SignUpModel(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
-        // Propiedad que enlaza los datos del formulario
         [BindProperty]
         public InputModel Input { get; set; }
 
-        // Modelo para datos que recibimos del formulario
         public class InputModel
         {
             [Required(ErrorMessage = "El nombre es obligatorio")]
@@ -47,43 +50,52 @@ namespace portalNoticiasGDJB.Pages
 
         public void OnGet()
         {
-            // Simplemente muestra la página (GET)
+            // Mostrar la página
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
             {
-                // Si hay errores de validación, recarga la página con mensajes
                 return Page();
             }
 
-            // Crear un nuevo usuario IdentityUser
             var user = new IdentityUser
             {
                 UserName = Input.UserName,
                 Email = Input.Email
             };
 
-            // Intentar registrar el usuario con la contraseña
             var result = await _userManager.CreateAsync(user, Input.Password);
 
             if (result.Succeeded)
             {
-                // Si el registro fue exitoso, iniciar sesión automáticamente
+
+                var roleName = "User"; 
+
+                if (!await _roleManager.RoleExistsAsync(roleName))
+                {
+                    var roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
+                    if (!roleResult.Succeeded)
+                    {
+                        // Maneja el error de creación de rol
+                        ModelState.AddModelError(string.Empty, "Error al crear el rol.");
+                        return Page();
+                    }
+                }
+
+                await _userManager.AddToRoleAsync(user, roleName);
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
-                // Redirigir a la página principal o la que quieras
                 return RedirectToPage("/Index");
             }
 
-            // Si hubo errores, agregarlos al ModelState para mostrarlos en la vista
             foreach (var error in result.Errors)
             {
                 ModelState.AddModelError(string.Empty, error.Description);
             }
 
-            // Mostrar la página con errores
             return Page();
         }
     }

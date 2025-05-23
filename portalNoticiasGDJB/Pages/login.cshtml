@@ -75,21 +75,27 @@
                 }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h2>Iniciar Sesión</h2>
-        <form id="loginForm" method="POST" asp-page="/perfil" onsubmit="return validarLoginForm(event)">
-            <input type="text" id="usuario" name="usuario" placeholder="Usuario">
-            <input type="password" id="contrasena" name="contrasena" placeholder="Contraseña">
-            <button type="submit" class="btn">Entrar</button>
-        </form>
-        <div class="link">
-            <p>¿No tienes una cuenta? <a asp-page="/SignUp">Regístrate aquí</a></p>
-        </div>
-    </div>
-    <script src="~/js/validaciones.js"></script>
-    <script src="~/js/roles.js"></script>
+    <body>
+        <div class="container">
+            <h2>Iniciar Sesión</h2>
+            <form method="post">
+                <div asp-validation-summary="All" class="text-danger"></div>
 
-</body>
+                <label asp-for="Input.UserName">Usuario:</label>
+                <input asp-for="Input.UserName" />
+                <span asp-validation-for="Input.UserName" class="text-danger"></span>
+
+                <label asp-for="Input.Password">Contraseña:</label>
+                <input asp-for="Input.Password" type="password" />
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+                <button type="submit" class="btn">Entrar</button>
+            </form>
+
+            <div class="link">
+                <p>¿No tienes una cuenta? <a asp-page="/SignUp">Regístrate aquí</a></p>
+            </div>
+        </div>
+    </body>
 </html>
 
