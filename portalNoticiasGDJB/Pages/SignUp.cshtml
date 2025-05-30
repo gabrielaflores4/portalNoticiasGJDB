@@ -1,6 +1,7 @@
 ﻿@page
 @model portalNoticiasGDJB.Pages.SignUpModel
 @{
+    ViewData["Title"] = "Registro";
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -8,16 +9,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Usuario</title>
-    <link rel="stylesheet" href="styles.css">
+    
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .Rcontainer {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: auto;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .Rbtn {
+            background-color: #0F2A1D;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-custom {
+            background-color: #0F2A1D !important;
+            border-color: #0F2A1D !important;
+        }
+
+            .btn-custom:hover {
+                background-color: #6B9071 !important;
+            }
+
+        .Rbtn:hover {
+            background-color: #6B9071;
+        }
+
+        .link {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+            .link a {
+                color: #6B9071;
+                text-decoration: none;
+            }
+
+                .link a:hover {
+                    text-decoration: underline;
+                }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .text-danger {
+            display: block;
+            text-align: left;
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+
+        .form-content {
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+
 </head>
-<body class=" Rbody">
+<body>
     <div class="Rcontainer">
         <h2>Registro de Usuario</h2>
-        <div class="Rcontainer">
-            <h2>@ViewData["Title"]</h2>
 
+        <div class="form-content">
             <form method="post">
-                <!-- Resumen de errores generales -->
                 <div asp-validation-summary="All" class="text-danger"></div>
 
                 <label asp-for="Input.UserName">Nombre:</label>
@@ -42,7 +131,7 @@
             <div class="link">
                 <p>¿Ya tienes una cuenta? <a asp-page="/Login">Inicia sesión aquí</a></p>
             </div>
+        </div>
     </div>
-    
 </body>
 </html>

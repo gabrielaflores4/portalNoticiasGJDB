@@ -6,6 +6,17 @@
 
 <h2 class="gestion-title">Gestión de Usuarios</h2>
 
+<!-- Mostrar errores-->
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="error-message">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <p>@error.ErrorMessage</p>
+        }
+    </div>
+}
+
 <div class="table-container">
     <table class="user-management-table">
         <thead>
@@ -22,7 +33,8 @@
                     <td>@user.Email</td>
                     <td>@string.Join(", ", await UserManager.GetRolesAsync(user))</td>
                     <td>
-                        <form method="post" class="user-actions-form">
+                        <!-- Formulario para asignar rol -->
+                        <form method="post" asp-page-handler="AsignarRol" class="user-actions-form">
                             <input type="hidden" name="userId" value="@user.Id" />
                             <select name="role" class="role-select">
                                 @foreach (var role in Model.AllRoles)
@@ -30,11 +42,14 @@
                                     <option value="@role">@role</option>
                                 }
                             </select>
-                            <button type="submit" class="btn-asignar" formaction="?handler=AsignarRol">Asignar Rol</button>
-                            <button type="submit" class="btn-eliminar" formaction="?handler=EliminarUsuario"
-                                    onclick="return confirm('¿Seguro que quieres eliminar a este usuario?');">
-                                Eliminar
-                            </button>
+                            <button type="submit" class="btn-asignar">Asignar Rol</button>
+                        </form>
+
+                        <!-- Formulario para eliminar usuario -->
+                        <form method="post" asp-page-handler="EliminarUsuario" class="user-actions-form"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar a este usuario?');">
+                            <input type="hidden" name="userId" value="@user.Id" />
+                            <button type="submit" class="btn-eliminar">Eliminar</button>
                         </form>
                     </td>
                 </tr>

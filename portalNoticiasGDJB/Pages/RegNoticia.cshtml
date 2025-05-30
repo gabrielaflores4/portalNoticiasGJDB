@@ -4,32 +4,34 @@
     ViewData["Title"] = "Registrar Noticia";
 }
 
-<h1 class="mb-4">Registrar Noticia</h1>
+<div class="Rcontainer">
+    <h1 class="mb-4">Registrar Noticia</h1>
 
-<!-- Área para mostrar mensajes -->
-<div id="mensaje" class="alert alert-info" style="display: none;"></div>
+    <div id="mensaje" class="alert alert-info" style="display: none;"></div>
 
-<form id="noticiaForm" method="post" enctype="multipart/form-data">
-    <div class="mb-3">
-        <label for="Titulo" class="form-label">Título de la Noticia</label>
-        <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Escribe el título aquí" required />
-    </div>
+    <form id="noticiaForm" method="post" enctype="multipart/form-data">
+        <div class="form-group mb-3">
+            <label for="Titulo" class="form-label">Título de la Noticia</label>
+            <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Escribe el título aquí" required />
+        </div>
 
-    <div class="mb-3">
-        <label for="Contenido" class="form-label">Contenido de la Noticia</label>
-        <textarea class="form-control" id="Contenido" name="Contenido" rows="6" placeholder="Escribe el contenido aquí" required></textarea>
-    </div>
+        <div class="form-group mb-3">
+            <label for="Contenido" class="form-label">Contenido de la Noticia</label>
+            <textarea class="form-control" id="Contenido" name="Contenido" rows="6" placeholder="Escribe el contenido aquí" required></textarea>
+        </div>
 
-    <div class="mb-3">
-        <label for="FechaPublicacion" class="form-label">Fecha de Publicación</label>
-        <input type="datetime-local" class="form-control" id="FechaPublicacion" name="FechaPublicacion" required />
-    </div>
+        <div class="form-group mb-3">
+            <label for="FechaPublicacion" class="form-label">Fecha de Publicación</label>
+            <input type="datetime-local" class="form-control" id="FechaPublicacion" name="FechaPublicacion" required />
+        </div>
 
-    <div class="mb-3">
-        <label for="Imagen" class="form-label">Imagen de la Noticia (opcional)</label>
-        <input type="file" class="form-control" id="Imagen" name="Imagen" accept="image/*" />
-    </div>
+        <div class="form-group mb-3">
+            <label for="Imagen" class="form-label">Imagen de la Noticia</label>
+            <input type="file" class="form-control" id="Imagen" name="Imagen" accept="image/*" />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Guardar Noticia</button>
-</form>
- 
+        <div class="form-actions">
+            <button type="submit" class="btn btn-custom">Guardar Noticia</button>
+        </div>
+    </form>
+</div>
