@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authorization;
 
 namespace portalNoticiasGDJB.Pages
 {
+    [Authorize]
     public class perfilModel : PageModel
     {
         private readonly UserManager<IdentityUser> _userManager;

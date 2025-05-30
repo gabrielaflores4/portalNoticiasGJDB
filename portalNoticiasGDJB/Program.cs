@@ -29,6 +29,13 @@ builder.Services.AddDbContext<AppDb>(options =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDb>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/login"; // Asegúrate que esta ruta sea la correcta
+    options.ExpireTimeSpan = TimeSpan.FromDays(14); // Mantiene sesión durante 14 días
+    options.SlidingExpiration = true; // Renueva si hay actividad
+});
+
 builder.Services.AddRazorPages();
 
 var app = builder.Build();

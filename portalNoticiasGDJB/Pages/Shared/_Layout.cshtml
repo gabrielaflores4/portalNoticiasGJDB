@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -34,9 +38,19 @@
             </div>
         </div>
         <div class="login-icon">
-            <a asp-page="/login">
-                <img src="~/img/perfil.png" alt="Perfil">
-            </a>
+            
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <a asp-page="/perfil">
+                    <img src="~/img/perfil.png" alt="Perfil">
+                </a>
+            }
+            else
+            {
+                <a asp-page="/login">
+                    <img src="~/img/perfil.png" alt="Perfil">
+                </a>
+            }
  
             <img class="opciones img-fluid" src="~/img/marcador.png" alt="Opciones" onclick="toggleMenu()">
 

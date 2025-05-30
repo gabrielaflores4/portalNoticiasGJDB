@@ -36,7 +36,7 @@ namespace portalNoticiasGDJB.Pages
             if (!ModelState.IsValid)
                 return Page();
 
-            var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, isPersistent: false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(Input.UserName, Input.Password, isPersistent: true, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
