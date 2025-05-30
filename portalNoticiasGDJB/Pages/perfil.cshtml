@@ -20,6 +20,7 @@
 }
 
 <div class="perfil-wrapper">
+
     <div class="container-perfil">
         <div class="datos-usuario">
             <img src="~/img/perfil.png" alt="Foto de perfil">
@@ -28,6 +29,14 @@
         </div>
 
         <div class="acciones-perfil">
+            @if (TempData["Mensaje"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["Mensaje"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
             @if (isAdmin || isPeriodista)
             {
                 <a href="/RegNoticia" class="btn-perfil">

@@ -42,7 +42,7 @@ namespace portalNoticiasGDJB.Pages
 
         public void OnGet()
         {
-            // Aquí podrías cargar datos si quieres, pero para cambiar contraseña no es necesario
+            
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -55,7 +55,6 @@ namespace portalNoticiasGDJB.Pages
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                // Si el usuario no está logueado o no existe, redirigir al login
                 return RedirectToPage("/Login");
             }
 
@@ -70,11 +69,10 @@ namespace portalNoticiasGDJB.Pages
                 return Page();
             }
 
-            // Para mantener la sesión activa después del cambio
             await _signInManager.RefreshSignInAsync(user);
 
-            TempData["MensajeExito"] = "Tu contraseña ha sido cambiada exitosamente.";
-            return RedirectToPage("/Perfil"); // O la página que desees después del cambio
+            TempData["Mensaje"] = "Tu contraseña ha sido cambiada exitosamente.";
+            return RedirectToPage("/Perfil");
         }
     }
 }

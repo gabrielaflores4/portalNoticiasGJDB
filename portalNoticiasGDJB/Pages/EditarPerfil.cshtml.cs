@@ -39,6 +39,23 @@ namespace portalNoticiasGDJB.Pages
             public string ConfirmNewPassword { get; set; }
         }
 
+        public async Task<IActionResult> OnGetAsync()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("No se pudo cargar el usuario.");
+            }
+
+            Input = new EditarDatosInputModel
+            {
+                UserName = user.UserName,
+                Email = user.Email
+            };
+
+            return Page();
+        }
+
         public async Task<IActionResult> OnPostEditarDatosAsync()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -72,11 +89,10 @@ namespace portalNoticiasGDJB.Pages
                 return Page();
             }
 
-            // Refrescar cookie de autenticación para actualizar claims, si es necesario
             await _signInManager.RefreshSignInAsync(user);
 
             TempData["Mensaje"] = "Datos actualizados correctamente";
-            return RedirectToPage();
+            return RedirectToPage("/perfil");
         }
 
         public async Task<IActionResult> OnPostCambiarContrasenaAsync()
