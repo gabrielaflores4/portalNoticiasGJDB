@@ -12,7 +12,7 @@ using portalNoticiasGDJB.Data;
 namespace portalNoticiasGDJB.Migrations
 {
     [DbContext(typeof(AppDb))]
-    [Migration("20250522211827_InitialCreate")]
+    [Migration("20250530003327_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -221,6 +221,54 @@ namespace portalNoticiasGDJB.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("portalNoticiasGDJB.Models.Noticia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id_noticia");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contenido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("contenido");
+
+                    b.Property<int>("Dislikes")
+                        .HasColumnType("int")
+                        .HasColumnName("dislikes");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_creacion");
+
+                    b.Property<DateTime?>("FechaEdicion")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("fecha_edicion");
+
+                    b.Property<int?>("IdCategoria")
+                        .HasColumnType("int")
+                        .HasColumnName("id_categoria");
+
+                    b.Property<int?>("IdUsuario")
+                        .HasColumnType("int")
+                        .HasColumnName("id_usuario");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int")
+                        .HasColumnName("likes");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("titulo");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Noticia");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

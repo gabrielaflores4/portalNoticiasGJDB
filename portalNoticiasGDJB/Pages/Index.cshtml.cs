@@ -1,20 +1,28 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using portalNoticiasGDJB.Data;
+using portalNoticiasGDJB.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace portalNoticiasGDJB.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly AppDb _context;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(AppDb context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public void OnGet()
-        {
+        public List<Noticia> Noticias { get; set; }
 
+        public async Task OnGetAsync()
+        {
+            Noticias = await _context.Noticias
+                .AsNoTracking()
+                .OrderByDescending(n => n.FechaPublicacion)
+                .ToListAsync();
         }
     }
 }

@@ -8,20 +8,34 @@
 <div class="contenedor1">
     <h1>Últimas Noticias</h1>
 
+    @if (Model.Noticias == null || Model.Noticias.Count == 0)
+    {
+        <p>No hay noticias para mostrar.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var noticia in Model.Noticias)
+            {
+                <div class="col-md-6 mb-4 news-card">
+                    <h2>
+                        <a asp-page="/NoticiaDetalle" asp-route-id="@noticia.Id" class="text-decoration-none text-dark">
+                            @noticia.Titulo
+                        </a>
+                    </h2>
 
-    <div class="noticia-principal">
-        <img src="https://conecta.tec.mx/sites/default/files/styles/header_full/public/2025-01/segundo-mandato-donald-trump.jpg.webp?itok=hXpOtxbk" alt="Deporte" width="900">
-        <h2>
-            <a asp-page="/Index1" class="text-decoration-none text-dark">
-                Esto es lo que se encarecerá con los aranceles del 25% sobre las mercancías mexicanas y canadienses
-            </a>
-        </h2>
-        <button class="fav-btn" data-id="1" data-title="Encarecimiento de aranceles Mexico y Canadá"> Guardar</button>
-    </div>
+                    @if (noticia.Imagen != null)
+                    {
+                        <img src="/imagen/@noticia.Id" alt="Imagen de la noticia" class="img-fluid mb-2" style="max-height: 200px;" />
+                    }
 
-    <h2>Noticias Nuevas Creadas por los Usuarios</h2>
-    <div id="noticias-dinamicas" class="grid-noticias">
-    </div>
+                    <p class="text-muted">@noticia.FechaPublicacion.ToString("dd MMM yyyy")</p>
+                    <p>@(noticia.Contenido.Length > 150 ? noticia.Contenido.Substring(0, 150) + "..." : noticia.Contenido)</p>
+                    <button class="fav-btn" data-id="@noticia.Id" data-title="@noticia.Titulo">Guardar</button>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 

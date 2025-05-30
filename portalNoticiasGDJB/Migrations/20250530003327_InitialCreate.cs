@@ -51,6 +51,26 @@ namespace portalNoticiasGDJB.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Noticia",
+                columns: table => new
+                {
+                    id_noticia = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    id_categoria = table.Column<int>(type: "int", nullable: true),
+                    fecha_creacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    fecha_edicion = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    id_usuario = table.Column<int>(type: "int", nullable: true),
+                    likes = table.Column<int>(type: "int", nullable: false),
+                    dislikes = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Noticia", x => x.id_noticia);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -213,6 +233,9 @@ namespace portalNoticiasGDJB.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Noticia");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -1,123 +1,99 @@
-﻿function guardarNoticia(event) {
-    event.preventDefault();
-
-    // Obtener los valores del formulario
-    const titulo = document.getElementById('Titulo').value;
-    const contenido = document.getElementById('Contenido').value;
-    const fechaPublicacion = document.getElementById('FechaPublicacion').value;
-    const imagen = document.getElementById('Imagen').files[0];
-
-    // Validar que todos los campos estén completos
-    if (!titulo || !contenido || !fechaPublicacion || !imagen) {
-        mostrarMensaje('Por favor, completa todos los campos.', 'error');
-        return;
+﻿document.addEventListener('DOMContentLoaded', function () {
+    const formulario = document.getElementById('noticiaForm');
+    if (formulario) {
+        formulario.addEventListener('submit', function (event) {
+            if (validarNoticia(event)) {
+                guardarNoticia(event);
+            }
+        });
     }
 
-    // Convertir la imagen a base64
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        const imagenBase64 = event.target.result;
+    if (document.getElementById('noticias-dinamicas')) {
+        cargarNoticias('noticias-dinamicas');
+    }
+});
 
-        // Crear el objeto noticia
+function guardarNoticia(event) {
+    event.preventDefault();
+
+    const titulo = document.getElementById('titulo').value;
+    const contenido = document.getElementById('contenido').value;
+    const imagenInput = document.getElementById('imagen');
+    const imagenArchivo = imagenInput.files[0];
+
+    const lector = new FileReader();
+    lector.onload = function (e) {
+        const imagenBase64 = e.target.result;
+
         const noticia = {
-            id: new Date().getTime(), // Usar timestamp como ID único
             titulo: titulo,
             contenido: contenido,
-            imagenUrl: imagenBase64,
-            fechaPublicacion: fechaPublicacion
+            imagen: imagenBase64,
+            fecha: new Date().toISOString()
         };
 
-        // Guardar en localStorage
         let noticias = JSON.parse(localStorage.getItem('noticias')) || [];
         noticias.push(noticia);
         localStorage.setItem('noticias', JSON.stringify(noticias));
 
-        // Mostrar mensaje de éxito
-        mostrarMensaje('Noticia creada exitosamente!', 'success');
+        alert('Noticia registrada exitosamente.');
+        window.location.href = '/Index';
+    };
 
-        // Redirigir a la página principal después de 2 segundos
-        setTimeout(() => {
-            window.location.href = '/Index';
-        }, 2000);
-    };
-    reader.onerror = function () {
-        mostrarMensaje('Error al cargar la imagen. Inténtalo de nuevo.', 'error');
-    };
-    reader.readAsDataURL(imagen);
+    if (imagenArchivo) {
+        lector.readAsDataURL(imagenArchivo);
+    } else {
+        const noticia = {
+            titulo: titulo,
+            contenido: contenido,
+            imagen: null,
+            fecha: new Date().toISOString()
+        };
+
+        let noticias = JSON.parse(localStorage.getItem('noticias')) || [];
+        noticias.push(noticia);
+        localStorage.setItem('noticias', JSON.stringify(noticias));
+
+        alert('Noticia registrada exitosamente.');
+        window.location.href = '/Index';
+    }
 }
 
-// Función para cargar y mostrar noticias en la página principal
-function cargarNoticias(contenedorId, mostrarBotonEliminar = false) {
+function cargarNoticias(idContenedor) {
+    const contenedor = document.getElementById(idContenedor);
     const noticias = JSON.parse(localStorage.getItem('noticias')) || [];
-    const contenedorNoticias = document.getElementById(contenedorId);
 
-    if (noticias.length === 0) {
-        contenedorNoticias.innerHTML = '<p>No hay noticias disponibles.</p>';
-    } else {
-        contenedorNoticias.innerHTML = ''; // Limpiar antes de agregar nuevas
+    noticias.forEach(noticia => {
+        const card = document.createElement('div');
+        card.className = 'card mb-3';
 
-        noticias.forEach(noticia => {
-            let noticiaHTML = document.createElement('div');
-            noticiaHTML.classList.add('news-card'); // Usamos la clase news-card para el estilo
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body';
 
-            // Crear el contenido de la noticia
-            let contenidoNoticia = `
-                <img src="${noticia.imagenUrl}" alt="${noticia.titulo}" class="noticia-imagen">
-                <div class="noticia-contenido">
-                    <h4 class="noticia-titulo">${noticia.titulo}</h4>
-                    <p class="noticia-texto">${noticia.contenido}</p>
-                    <p class="noticia-fecha"><small>Publicado el ${noticia.fechaPublicacion}</small></p>
-            `;
+        const titulo = document.createElement('h5');
+        titulo.className = 'card-title';
+        titulo.textContent = noticia.titulo;
 
-            // Agregar el botón de eliminar solo si mostrarBotonEliminar es true
-            if (mostrarBotonEliminar) {
-                contenidoNoticia += `<button onclick="eliminarNoticia(${noticia.id})" class="btn-eliminar">Eliminar</button>`;
-            }
+        const contenido = document.createElement('p');
+        contenido.className = 'card-text';
+        contenido.textContent = noticia.contenido;
 
-            contenidoNoticia += `</div>`; // Cerrar el div de la noticia
-            noticiaHTML.innerHTML = contenidoNoticia;
-            contenedorNoticias.appendChild(noticiaHTML);
-        });
-    }
+        if (noticia.imagen) {
+            const imagen = document.createElement('img');
+            imagen.src = noticia.imagen;
+            imagen.className = 'img-fluid';
+            imagen.alt = 'Imagen de la noticia';
+            cardBody.appendChild(imagen);
+        }
+
+        const fecha = document.createElement('p');
+        fecha.className = 'card-text';
+        fecha.innerHTML = `<small class="text-muted">${new Date(noticia.fecha).toLocaleString()}</small>`;
+
+        cardBody.appendChild(titulo);
+        cardBody.appendChild(contenido);
+        cardBody.appendChild(fecha);
+        card.appendChild(cardBody);
+        contenedor.appendChild(card);
+    });
 }
-
-function eliminarNoticia(id) {
-    let noticias = JSON.parse(localStorage.getItem('noticias')) || [];
-    noticias = noticias.filter(noticia => noticia.id !== id);
-    localStorage.setItem('noticias', JSON.stringify(noticias));
-    cargarNoticias('noticias-perfil', true);
-    mostrarMensaje('Noticia eliminada exitosamente.', 'success');
-}
-
-// Función para mostrar mensajes
-function mostrarMensaje(mensaje, tipo) {
-    const mensajeDiv = document.createElement('div');
-    mensajeDiv.className = `alert alert-${tipo}`;
-    mensajeDiv.textContent = mensaje;
-
-    // Insertar el mensaje en el formulario o en la página
-    const formulario = document.getElementById('noticiaForm');
-    if (formulario) {
-        formulario.prepend(mensajeDiv);
-    } else {
-        document.body.prepend(mensajeDiv);
-    }
-
-    // Eliminar el mensaje después de 3 segundos
-    setTimeout(() => {
-        mensajeDiv.remove();
-    }, 5000);
-}
-
-// Asignar eventos al cargar la página
-document.addEventListener('DOMContentLoaded', function () {
-    // Si estamos en la página de registro, asignar el evento al formulario
-    if (document.getElementById('noticiaForm')) {
-        document.getElementById('noticiaForm').addEventListener('submit', guardarNoticia);
-    }
-
-    // Si estamos en la página principal, cargar las noticias
-    if (document.getElementById('noticias-dinamicas')) {
-        cargarNoticias('noticias-dinamicas');;
-    }
-});
