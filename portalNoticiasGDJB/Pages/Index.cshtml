@@ -5,6 +5,9 @@
     Layout = "_Layout";
 }
 
+@{
+    var noticiasMostradasIds = new List<int>();
+}
 <div class="contenedor1">
     <h1>Últimas Noticias</h1>
 
@@ -14,8 +17,14 @@
     }
     else
     {
+        var ultimasNoticias = Model.Noticias.Take(4).ToList(); 
+        foreach (var noticia in ultimasNoticias)
+        {
+            noticiasMostradasIds.Add(noticia.Id);
+        }
+
         <div class="row">
-            @foreach (var noticia in Model.Noticias)
+            @foreach (var noticia in ultimasNoticias)
             {
                 <div class="col-md-6 mb-4 news-card">
                     <h2>
@@ -31,6 +40,9 @@
 
                     <p class="text-muted">@noticia.FechaPublicacion.ToString("dd MMM yyyy")</p>
                     <p>@(noticia.Contenido.Length > 150 ? noticia.Contenido.Substring(0, 150) + "..." : noticia.Contenido)</p>
+
+                    <a asp-page="/NoticiaCompleta" asp-route-id="@noticia.Id" class="btn btn-primary mb-2">Leer más</a>
+
                     <button class="fav-btn" data-id="@noticia.Id" data-title="@noticia.Titulo">Guardar</button>
                 </div>
             }
@@ -38,74 +50,83 @@
     }
 </div>
 
-
-<div class="row">
+<div>
     <h2>Te puede interesar...</h2>
-    <div class="col-md-6 news-card">
-        <img src="~/img/noticia1clima.jpg" alt="Noticia 2">
-        <h2>
-            <a asp-page="/Noticia 2" class="text-decoration-none text-dark">
-                Primera tormenta invernal obliga a rescates acuáticos, corta la electricidad y crea peligrosas condiciones de viaje
-            </a>
-        </h2>
-        <button class="fav-btn" data-id="2" data-title="Primera tormenta invernal"> Guardar</button>
-    </div>
 
-    <div class="col-md-6 news-card">
-        <h2>
-            <img src="~/img/Forza horizon.png" alt="Noticia 3">
-            <a asp-page="/index3" class="text-decoration-none text-dark">
-                Microsoft anunció que Forza Horizon 5, uno de los juegos más emblemáticos de Xbox, llegará a PlayStation 5 en 2025
-            </a>
-        </h2>
-        <button class="fav-btn" data-id="3" data-title="Forza Horizon 5 a PS5"> Guardar</button>
-    </div>
-</div>
+    @{
+        var sugeridas = Model.Noticias
+        .Where(n => !noticiasMostradasIds.Contains(n.Id))
+        .ToList();
 
-<div class="row">
-    <div class="col-md-6 news-card">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8xcIuknfW7S17DJH3GIer71ef8N0wt_PaQw&s" alt="Noticia 4">
-        <h2>
-            <a asp-page="/Index2" class="text-decoration-none text-dark">
-                Rayados oficializa el fichaje de Sergio Ramos
-            </a>
-        </h2>
-        <button class="fav-btn" data-id="4" data-title="Sergio Ramos a los rayados"> Guardar</button>
-    </div>
+        if (sugeridas.Count > 0)
+        {
+            var noticiasSinUltima = sugeridas.Take(sugeridas.Count - 1).ToList();
+            var ultimaNoticia = sugeridas.Last();
 
-    <div class="col-md-6 news-card">
-        <h2>
-            <img src="~/img/gomas.png" alt="Noticia 5">
-            <a asp-page="/index4" class="text-decoration-none text-dark">
-                FDA prohíbe el colorante rojo número 3 en alimentos, bebidas y medicamentos; en estudios se le ha vinculado con cáncer
-            </a>
-        </h2>
-        <button class="fav-btn" data-id="5" data-title="FDA prohíbe colorante rojo numero 3"> Guardar</button>
-    </div>
-</div>
+            for (int i = 0; i < noticiasSinUltima.Count; i += 2)
+            {
+                <div class="row">
+                    @for (int j = i; j < i + 2 && j < noticiasSinUltima.Count; j++)
+                    {
+                        <div class="col-md-6 news-card">
+                            @if (!string.IsNullOrEmpty(noticiasSinUltima[j].ImagenRuta))
+                            {
+                                <img src="@noticiasSinUltima[j].ImagenRuta" alt="@noticiasSinUltima[j].Titulo" class="img-fluid mb-2" style="max-height: 200px;" />
+                            }
+                            <h2>
+                                <a asp-page="/NoticiaCompleta" asp-route-id="@noticiasSinUltima[j].Id" class="text-decoration-none text-dark">
+                                    @noticiasSinUltima[j].Titulo
+                                </a>
+                            </h2>
+                            <button class="fav-btn" data-id="@noticiasSinUltima[j].Id" data-title="@noticiasSinUltima[j].Titulo">Guardar</button>
+                        </div>
+                    }
+                </div>
+            }
 
-<div class="noticia-final">
-    <img src="~/img/iceberg.png" alt="Noticia 6">
-    <h2>
-        <a asp-page="/Index5" class="text-decoration-none text-dark">
-            Temores de que el iceberg más grande del mundo pueda chocar contra una isla del Atlántico Sur
-        </a>
-    </h2>
-    <button class="fav-btn" data-id="6" data-title="iceberg"> Guardar</button>
+            <div class="noticia-final mt-4">
+                @if (!string.IsNullOrEmpty(ultimaNoticia.ImagenRuta))
+                {
+                    <img src="@ultimaNoticia.ImagenRuta" alt="@ultimaNoticia.Titulo" style="max-height: 300px;" />
+                }
+                <h2>
+                    <a asp-page="/NoticiaCompleta" asp-route-id="@ultimaNoticia.Id" class="text-decoration-none text-dark">
+                        @ultimaNoticia.Titulo
+                    </a>
+                </h2>
+                <button class="fav-btn" data-id="@ultimaNoticia.Id" data-title="@ultimaNoticia.Titulo">Guardar</button>
+            </div>
+        }
+        else
+        {
+            <p>No hay noticias recomendadas para mostrar.</p>
+        }
+    }
 </div>
 
 <div class="ticker">
     <div class="ticker-content">
-        <p>Breaking News: FDA prohíbe el colorante rojo número 3 en alimentos, bebidas y medicamentos; en estudios se le ha vinculado con cáncer. | Última hora: Primera tormenta invernal obliga a rescates acuáticos, corta la electricidad y crea peligrosas condiciones de viaje. | Microsoft anunció que Forza Horizon 5, uno de los juegos más emblemáticos de Xbox, llegará a PlayStation 5 en 2025 </p>
+        <p>
+            @if (Model.Noticias != null && Model.Noticias.Any())
+            {
+                var titulares = Model.Noticias.Select(n => n.Titulo).Distinct().ToList();
+                string textoTicker = string.Join(" | ", titulares);
+
+                @textoTicker
+            }
+            else
+            {
+                <text>No hay noticias para mostrar.</text>
+            }
+        </p>
     </div>
 </div>
 
 @section Scripts {
     <script src="~/js/Noticias.js"></script>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-
             if (document.getElementById('noticias-dinamicas')) {
                 cargarNoticias('noticias-dinamicas', false);
             }

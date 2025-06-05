@@ -1,12 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using portalNoticiasGDJB.Data; // Cambia al namespace donde esté tu DbContext
+using portalNoticiasGDJB.Data;
 using portalNoticiasGDJB.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace portalNoticiasGDJB.Pages
 {
@@ -31,22 +28,33 @@ namespace portalNoticiasGDJB.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Noticia = await _context.Noticias
-                .Include(n => n.Usuario)
-                .FirstOrDefaultAsync(n => n.Id == Id);
-
-            if (Noticia == null)
+            try
             {
-                return NotFound();
+                var noticia = await _context.Noticias
+                            .AsNoTracking()
+                            .Include(n => n.Usuario)
+                            .FirstOrDefaultAsync(n => n.Id == Id);
+
+                if (noticia is null)
+                {
+                    return NotFound();
+                }
+
+                Noticia = noticia;
+
+                Comentarios = await _context.Comentarios
+                    .AsNoTracking()  
+                    .Include(c => c.Usuario)
+                    .Where(c => c.NoticiaId == Id)
+                    .OrderByDescending(c => c.FechaCreacion)
+                    .ToListAsync();
+
+                return Page();
             }
-
-            Comentarios = await _context.Comentarios
-                .Include(c => c.Usuario)
-                .Where(c => c.NoticiaId == Id)
-                .OrderByDescending(c => c.FechaCreacion)
-                .ToListAsync();
-
-            return Page();
+            catch (Exception)
+            {
+                return RedirectToPage("/Error");
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -56,17 +64,16 @@ namespace portalNoticiasGDJB.Pages
                 ModelState.AddModelError("", "El comentario no puede estar vacío.");
             }
 
-            // Cargar la noticia para volver a mostrar la página
-            Noticia = await _context.Noticias
+            var noticia = await _context.Noticias
                 .Include(n => n.Usuario)
                 .FirstOrDefaultAsync(n => n.Id == Id);
 
-            if (Noticia == null)
+            if (noticia == null)
             {
                 return NotFound();
             }
 
-            Comentarios = await _context.Comentarios
+            var comentarios = await _context.Comentarios
                 .Include(c => c.Usuario)
                 .Where(c => c.NoticiaId == Id)
                 .OrderByDescending(c => c.FechaCreacion)
@@ -80,9 +87,10 @@ namespace portalNoticiasGDJB.Pages
             var nuevoComentario = new Comentario
             {
                 Contenido = ContenidoComentario,
-                FechaCreacion = DateTime.Now,
+                FechaCreacion = DateTime.UtcNow,
                 NoticiaId = Id,
-                UsuarioId = User.Identity.IsAuthenticated ? User.FindFirst("sub")?.Value ?? User.Identity.Name : null
+                UsuarioId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? throw new InvalidOperationException("Usuario no autenticado")
             };
 
             _context.Comentarios.Add(nuevoComentario);

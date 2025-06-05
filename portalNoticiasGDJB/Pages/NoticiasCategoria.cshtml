@@ -1,0 +1,46 @@
+﻿@page "{categoria?}"
+@model NoticiasCategoriaModel
+@{
+    ViewData["Title"] = Model.Categoria;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>@ViewData["Title"] - portalNoticiasGDJB</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body style="display: flex; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+
+    <div class="contenedor">
+        <h1>@ViewData["Title"]</h1>
+
+        @if (Model.Noticias == null || Model.Noticias.Count == 0)
+        {
+            <p>No hay noticias en esta categoría.</p>
+        }
+        else
+        {
+            @foreach (var noticia in Model.Noticias)
+            {
+                <div class="noticia" style="margin-bottom: 40px; max-width: 800px;">
+
+                    <h2 class="titulo-secundario" style="text-align: center;">@noticia.Titulo</h2>
+
+                    @if (!string.IsNullOrEmpty(noticia.ImagenRuta))
+                    {
+                        <img class="imagen-principal" src="@noticia.ImagenRuta" alt="Imagen destacada de la noticia" width="100%" style="display: block; margin: 0 auto; margin-bottom: 15px;" />
+                    }
+
+                    <p class="texto-principal" style="text-align: justify;">
+                        @noticia.Contenido.Substring(0, Math.Min(300, noticia.Contenido.Length))...
+                    </p>
+
+                    <a asp-page="/NoticiaCompleta" asp-route-id="@noticia.Id" class="btn btn-primary" style="margin-top: 10px;">Leer más</a>
+                </div>
+            }
+        }
+    </div>
+</body>
+</html>
