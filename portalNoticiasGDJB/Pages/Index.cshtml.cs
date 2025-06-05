@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using portalNoticiasGDJB.Data;
-using portalNoticiasGDJB.Models;
 using Microsoft.EntityFrameworkCore;
-
+using portalNoticiasGDJB.Models;
+using portalNoticiasGDJB.Data;
 
 namespace portalNoticiasGDJB.Pages
 {
@@ -15,12 +15,21 @@ namespace portalNoticiasGDJB.Pages
             _context = context;
         }
 
-        public List<Noticia> Noticias { get; set; }
+        public IList<Noticia> Noticias { get; set; } = new List<Noticia>();
+
+        [BindProperty(SupportsGet = true)]
+        public string? SearchString { get; set; }
 
         public async Task OnGetAsync()
         {
-            Noticias = await _context.Noticias
-                .AsNoTracking()
+            var query = _context.Noticias.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(SearchString))
+            {
+                query = query.Where(n => EF.Functions.Like(n.Titulo, $"%{SearchString}%"));
+            }
+
+            Noticias = await query
                 .OrderByDescending(n => n.FechaPublicacion)
                 .ToListAsync();
         }
