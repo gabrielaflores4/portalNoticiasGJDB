@@ -11,13 +11,25 @@
 <div class="contenedor1">
     <h1>Últimas Noticias</h1>
 
+    <div class="news-list">
+        @foreach (var noticia in Model.Noticias)
+        {
+            <div class="news-item mb-4">
+                <h3>@noticia.Titulo</h3>
+                <small>@noticia.FechaPublicacion.ToString("dd/MM/yyyy")</small>
+                <p>@(noticia.Contenido.Length > 100 ? noticia.Contenido.Substring(0, 100) + "..." : noticia.Contenido)</p>
+                <a asp-page="/NoticiaCompleta" asp-route-id="@noticia.Id" class="btn btn-primary">Leer más</a>
+            </div>
+        }
+    </div>
+
     @if (Model.Noticias == null || Model.Noticias.Count == 0)
     {
         <p>No hay noticias para mostrar.</p>
     }
     else
     {
-        var ultimasNoticias = Model.Noticias.Take(4).ToList(); 
+        var ultimasNoticias = Model.Noticias.Take(4).ToList();
         foreach (var noticia in ultimasNoticias)
         {
             noticiasMostradasIds.Add(noticia.Id);
@@ -111,6 +123,7 @@
             {
                 var titulares = Model.Noticias.Select(n => n.Titulo).Distinct().ToList();
                 string textoTicker = string.Join(" | ", titulares);
+
                 @textoTicker
             }
             else
