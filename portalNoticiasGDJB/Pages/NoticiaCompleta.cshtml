@@ -36,7 +36,10 @@
                 </p>
 
                 <p><small>Publicado el: @Model.Noticia.FechaPublicacion.ToString("dd/MM/yyyy")</small></p>
-                <p><small>Autor: @Model.Noticia.Usuario?.UserName ?? "Desconocido"</small></p>
+                @{
+                    var autor = Model.Noticia.Usuario?.UserName ?? "Desconocido";
+                }
+                <p><small>Autor: @autor</small></p>
             </div>
 
             <hr />
@@ -49,7 +52,7 @@
                         @foreach (var comentario in Model.Comentarios)
                         {
                             <li>
-                                <strong>@(comentario.Usuario?.UserName ?? "Anónimo")</strong> 
+                                <strong>@(comentario.Usuario?.UserName ?? "Anónimo")</strong>
                                 (<em>@comentario.FechaCreacion.ToString("g")</em>)<br />
                                 @comentario.Contenido
                             </li>
@@ -64,12 +67,19 @@
 
             <hr />
 
-            <h4>Agregar comentario</h4>
-            <form method="post">
-                <textarea name="ContenidoComentario" rows="4" cols="50" placeholder="Escribe tu comentario aquí..." required></textarea>
-                <br />
-                <button type="submit">Enviar Comentario</button>
-            </form>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <h4>Agregar comentario</h4>
+                <form method="post">
+                    <textarea name="ContenidoComentario" rows="4" cols="50" placeholder="Escribe tu comentario aquí..." required></textarea>
+                    <br />
+                    <button type="submit">Enviar Comentario</button>
+                </form>
+            }
+            else
+            {
+                <p><a asp-page="/Login">Inicia sesión</a> para dejar un comentario.</p>
+            }
         </div>
     }
 </body>

@@ -1004,3 +1004,55 @@ input {
 .toggle-btn:hover {
     background-color: #e0e0e0;
 }
+
+/* Comentarios */
+#comments-section ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+#comments-section li {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    text-align: left;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+#comments-section strong {
+    color: #333;
+    font-size: 1rem;
+}
+
+#comments-section em {
+    color: #777;
+    font-size: 0.9rem;
+}
+
+form textarea {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: vertical;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+form button {
+    margin-top: 1rem;
+    background-color: #0f2a1d;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    form button:hover {
+        background-color: #6b9071;
+    }

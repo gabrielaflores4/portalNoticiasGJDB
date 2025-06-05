@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace portalNoticiasGDJB.Models
 {
-    [Table("Comentarios")] // Nombre exacto de la tabla en SQL
+    [Table("Comentarios")]
     public class Comentario
     {
         [Key]
