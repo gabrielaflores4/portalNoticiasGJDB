@@ -18,6 +18,7 @@ namespace portalNoticiasGDJB.Data
         public DbSet<Guardado> Guardados { get; set; }
         public DbSet<Reaccion> Reacciones { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

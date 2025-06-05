@@ -40,6 +40,34 @@
                     var autor = Model.Noticia.Usuario?.UserName ?? "Desconocido";
                 }
                 <p><small>Autor: @autor</small></p>
+
+                @{
+                    var likes = Model.Noticia.Reacciones?.Count(r => r.TipoReaccion) ?? 0;
+                    var dislikes = Model.Noticia.Reacciones?.Count(r => !r.TipoReaccion) ?? 0;
+                }
+
+                <div style="margin-top: 10px;">
+                    <p>👍 @likes | 👎 @dislikes</p>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form method="post" asp-page-handler="Reaccionar" style="display:inline;">
+                            <input type="hidden" name="NoticiaId" value="@Model.Noticia.Id" />
+                            <input type="hidden" name="Tipo" value="true" />
+                            <button type="submit" class="btn btn-success">👍 Like</button>
+                        </form>
+
+                        <form method="post" asp-page-handler="Reaccionar" style="display:inline;">
+                            <input type="hidden" name="NoticiaId" value="@Model.Noticia.Id" />
+                            <input type="hidden" name="Tipo" value="false" />
+                            <button type="submit" class="btn btn-danger">👎 Dislike</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p><a asp-page="/Login">Inicia sesión</a> para reaccionar.</p>
+                    }
+                </div>
             </div>
 
             <hr />

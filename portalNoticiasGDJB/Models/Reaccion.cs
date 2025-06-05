@@ -29,5 +29,7 @@ namespace portalNoticiasGDJB.Models
 
         [Column("FechaReaccion")]
         public DateTime FechaReaccion { get; set; } = DateTime.Now;
+
+
     }
 }

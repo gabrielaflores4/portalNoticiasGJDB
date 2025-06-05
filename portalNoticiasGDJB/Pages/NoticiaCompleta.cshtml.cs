@@ -20,7 +20,6 @@ namespace portalNoticiasGDJB.Pages
         public int Id { get; set; }
 
         public Noticia Noticia { get; set; }
-
         public List<Comentario> Comentarios { get; set; }
 
         [BindProperty]
@@ -30,20 +29,16 @@ namespace portalNoticiasGDJB.Pages
         {
             try
             {
-                var noticia = await _context.Noticias
-                            .AsNoTracking()
-                            .Include(n => n.Usuario)
-                            .FirstOrDefaultAsync(n => n.Id == Id);
+                Noticia = await _context.Noticias
+                    .AsNoTracking()
+                    .Include(n => n.Usuario)
+                    .Include(n => n.Reacciones) // ✅ Necesario para contar likes/dislikes
+                    .FirstOrDefaultAsync(n => n.Id == Id);
 
-                if (noticia is null)
-                {
-                    return NotFound();
-                }
-
-                Noticia = noticia;
+                if (Noticia == null) return NotFound();
 
                 Comentarios = await _context.Comentarios
-                    .AsNoTracking()  
+                    .AsNoTracking()
                     .Include(c => c.Usuario)
                     .Where(c => c.NoticiaId == Id)
                     .OrderByDescending(c => c.FechaCreacion)
@@ -51,7 +46,7 @@ namespace portalNoticiasGDJB.Pages
 
                 return Page();
             }
-            catch (Exception)
+            catch
             {
                 return RedirectToPage("/Error");
             }
@@ -64,25 +59,18 @@ namespace portalNoticiasGDJB.Pages
                 ModelState.AddModelError("", "El comentario no puede estar vacío.");
             }
 
-            var noticia = await _context.Noticias
+            Noticia = await _context.Noticias
                 .Include(n => n.Usuario)
                 .FirstOrDefaultAsync(n => n.Id == Id);
 
-            if (noticia == null)
-            {
-                return NotFound();
-            }
-
-            var comentarios = await _context.Comentarios
+            Comentarios = await _context.Comentarios
                 .Include(c => c.Usuario)
                 .Where(c => c.NoticiaId == Id)
                 .OrderByDescending(c => c.FechaCreacion)
                 .ToListAsync();
 
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
             var nuevoComentario = new Comentario
             {
@@ -90,13 +78,43 @@ namespace portalNoticiasGDJB.Pages
                 FechaCreacion = DateTime.UtcNow,
                 NoticiaId = Id,
                 UsuarioId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                ?? throw new InvalidOperationException("Usuario no autenticado")
+                    ?? throw new InvalidOperationException("Usuario no autenticado")
             };
 
             _context.Comentarios.Add(nuevoComentario);
             await _context.SaveChangesAsync();
 
             return RedirectToPage(new { id = Id });
+        }
+
+        public async Task<IActionResult> OnPostReaccionarAsync(int NoticiaId, bool Tipo)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized();
+
+            var reaccionExistente = await _context.Reacciones
+                .FirstOrDefaultAsync(r => r.UsuarioId == userId && r.NoticiaId == NoticiaId);
+
+            if (reaccionExistente != null)
+            {
+                reaccionExistente.TipoReaccion = Tipo;
+                reaccionExistente.FechaReaccion = DateTime.Now;
+                _context.Reacciones.Update(reaccionExistente);
+            }
+            else
+            {
+                var nuevaReaccion = new Reaccion
+                {
+                    UsuarioId = userId,
+                    NoticiaId = NoticiaId,
+                    TipoReaccion = Tipo,
+                    FechaReaccion = DateTime.Now
+                };
+                _context.Reacciones.Add(nuevaReaccion);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToPage(new { id = NoticiaId });
         }
     }
 }
