@@ -7,10 +7,14 @@ namespace portalNoticiasGDJB.Models
     public class Categoria
     {
         [Key]
-        public int Id_Categoria { get; set; }
+        [Column("id_categoria")]
+        public int Id { get; set; }
 
         [Required]
+        [Column("nombre")]
+        [StringLength(100)]
         public string Nombre { get; set; }
+
+        public ICollection<Noticia> Noticias { get; set; }
     }
 }
-

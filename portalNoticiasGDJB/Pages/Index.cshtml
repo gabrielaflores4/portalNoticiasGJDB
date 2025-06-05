@@ -24,9 +24,9 @@
                         </a>
                     </h2>
 
-                    @if (noticia.Imagen != null)
+                    @if (!string.IsNullOrEmpty(noticia.ImagenRuta))
                     {
-                        <img src="/imagen/@noticia.Id" alt="Imagen de la noticia" class="img-fluid mb-2" style="max-height: 200px;" />
+                        <img src="@noticia.ImagenRuta" alt="Imagen de la noticia" class="img-fluid mb-2" style="max-height: 200px;" />
                     }
 
                     <p class="text-muted">@noticia.FechaPublicacion.ToString("dd MMM yyyy")</p>

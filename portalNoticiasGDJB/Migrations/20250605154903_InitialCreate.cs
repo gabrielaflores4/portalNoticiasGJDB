@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace portalNoticiasGDJB.Migrations
 {
     /// <inheritdoc />
@@ -51,23 +53,16 @@ namespace portalNoticiasGDJB.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Noticia",
+                name: "Categoria",
                 columns: table => new
                 {
-                    id_noticia = table.Column<int>(type: "int", nullable: false)
+                    id_categoria = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    id_categoria = table.Column<int>(type: "int", nullable: true),
-                    fecha_creacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    fecha_edicion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    id_usuario = table.Column<int>(type: "int", nullable: true),
-                    likes = table.Column<int>(type: "int", nullable: false),
-                    dislikes = table.Column<int>(type: "int", nullable: false)
+                    nombre = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Noticia", x => x.id_noticia);
+                    table.PrimaryKey("PK_Categoria", x => x.id_categoria);
                 });
 
             migrationBuilder.CreateTable(
@@ -176,6 +171,128 @@ namespace portalNoticiasGDJB.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Noticia",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Titulo = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ImagenRuta = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaPublicacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    id_categoria = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Noticia", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Noticia_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Noticia_Categoria_id_categoria",
+                        column: x => x.id_categoria,
+                        principalTable: "Categoria",
+                        principalColumn: "id_categoria");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comentarios",
+                columns: table => new
+                {
+                    id_comentario = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    fecha_creacion = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    contenido = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    id_noticia = table.Column<int>(type: "int", nullable: false),
+                    user_id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comentarios", x => x.id_comentario);
+                    table.ForeignKey(
+                        name: "FK_Comentarios_AspNetUsers_user_id",
+                        column: x => x.user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comentarios_Noticia_id_noticia",
+                        column: x => x.id_noticia,
+                        principalTable: "Noticia",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Guardados",
+                columns: table => new
+                {
+                    id_guardado = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NoticiaId = table.Column<int>(type: "int", nullable: false),
+                    FechaGuardado = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Guardados", x => x.id_guardado);
+                    table.ForeignKey(
+                        name: "FK_Guardados_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Guardados_Noticia_NoticiaId",
+                        column: x => x.NoticiaId,
+                        principalTable: "Noticia",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reacciones",
+                columns: table => new
+                {
+                    id_reaccion = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NoticiaId = table.Column<int>(type: "int", nullable: false),
+                    TipoReaccion = table.Column<bool>(type: "bit", nullable: false),
+                    FechaReaccion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reacciones", x => x.id_reaccion);
+                    table.ForeignKey(
+                        name: "FK_Reacciones_AspNetUsers_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reacciones_Noticia_NoticiaId",
+                        column: x => x.NoticiaId,
+                        principalTable: "Noticia",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.InsertData(
+                table: "Categoria",
+                columns: new[] { "id_categoria", "nombre" },
+                values: new object[,]
+                {
+                    { 1, "Mundo" },
+                    { 2, "Economía" },
+                    { 3, "Deportes" },
+                    { 4, "Tecnología" },
+                    { 5, "Cultura" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -214,6 +331,48 @@ namespace portalNoticiasGDJB.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comentarios_id_noticia",
+                table: "Comentarios",
+                column: "id_noticia");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comentarios_user_id",
+                table: "Comentarios",
+                column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Guardados_NoticiaId",
+                table: "Guardados",
+                column: "NoticiaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Guardados_UsuarioId_NoticiaId",
+                table: "Guardados",
+                columns: new[] { "UsuarioId", "NoticiaId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Noticia_id_categoria",
+                table: "Noticia",
+                column: "id_categoria");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Noticia_UsuarioId",
+                table: "Noticia",
+                column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reacciones_NoticiaId",
+                table: "Reacciones",
+                column: "NoticiaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reacciones_UsuarioId_NoticiaId",
+                table: "Reacciones",
+                columns: new[] { "UsuarioId", "NoticiaId" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -235,13 +394,25 @@ namespace portalNoticiasGDJB.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Noticia");
+                name: "Comentarios");
+
+            migrationBuilder.DropTable(
+                name: "Guardados");
+
+            migrationBuilder.DropTable(
+                name: "Reacciones");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Noticia");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Categoria");
         }
     }
 }

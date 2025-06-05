@@ -7,27 +7,69 @@
 <div class="Rcontainer">
     <h1 class="mb-4">Registrar Noticia</h1>
 
-    <div id="mensaje" class="alert alert-info" style="display: none;"></div>
+    @if (!string.IsNullOrEmpty(Model.MensajeExito))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @Model.MensajeExito
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.MensajeError))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @Model.MensajeError
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="alert alert-warning">
+            <ul>
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <li>@error.ErrorMessage</li>
+                }
+            </ul>
+        </div>
+    }
 
     <form id="noticiaForm" method="post" enctype="multipart/form-data">
         <div class="form-group mb-3">
-            <label for="Titulo" class="form-label">Título de la Noticia</label>
-            <input type="text" class="form-control" id="Titulo" name="Titulo" placeholder="Escribe el título aquí" required />
+            <label asp-for="Titulo" class="form-label">Título de la Noticia</label>
+            <input asp-for="Titulo" class="form-control" placeholder="Escribe el título aquí" />
+            <span asp-validation-for="Titulo" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label for="Contenido" class="form-label">Contenido de la Noticia</label>
-            <textarea class="form-control" id="Contenido" name="Contenido" rows="6" placeholder="Escribe el contenido aquí" required></textarea>
+            <label asp-for="Contenido" class="form-label">Contenido de la Noticia</label>
+            <textarea asp-for="Contenido" class="form-control" rows="6" placeholder="Escribe el contenido aquí"></textarea>
+            <span asp-validation-for="Contenido" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label for="FechaPublicacion" class="form-label">Fecha de Publicación</label>
-            <input type="datetime-local" class="form-control" id="FechaPublicacion" name="FechaPublicacion" required />
+            <label asp-for="FechaPublicacion" class="form-label">Fecha de Publicación</label>
+            <input asp-for="FechaPublicacion"
+                   type="datetime-local"
+                   step="1"
+                   class="form-control"
+                   value="@Model.FechaPublicacion.ToString("yyyy-MM-ddTHH:mm:ss")" />
+            <span asp-validation-for="FechaPublicacion" class="text-danger"></span>
         </div>
 
         <div class="form-group mb-3">
-            <label for="Imagen" class="form-label">Imagen de la Noticia</label>
-            <input type="file" class="form-control" id="Imagen" name="Imagen" accept="image/*" />
+            <label asp-for="CategoriaId" class="form-label">Categoría</label>
+            <select asp-for="CategoriaId" class="form-select" asp-items="Model.Categorias">
+                <option value="">-- Selecciona una categoría --</option>
+            </select>
+            <span asp-validation-for="CategoriaId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mb-3">
+            <label asp-for="ArchivoImagen" class="form-label">Imagen de la Noticia</label>
+            <input asp-for="ArchivoImagen" type="file" class="form-control" accept="image/*" />
+            <span asp-validation-for="ArchivoImagen" class="text-danger"></span>
         </div>
 
         <div class="form-actions">
@@ -35,3 +77,7 @@
         </div>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

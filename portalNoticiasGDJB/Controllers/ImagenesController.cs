@@ -8,10 +8,12 @@ namespace portalNoticiasGDJB.Controllers
     public class ImagenesController : Controller
     {
         private readonly AppDb _context;
+        private readonly IWebHostEnvironment _environment;
 
-        public ImagenesController(AppDb context)
+        public ImagenesController(AppDb context, IWebHostEnvironment environment)
         {
             _context = context;
+            _environment = environment;
         }
 
         [HttpGet("noticia/{id}")]
@@ -19,17 +21,30 @@ namespace portalNoticiasGDJB.Controllers
         {
             var noticia = await _context.Noticias
                 .AsNoTracking()
-                .Select(n => new { n.Id, n.Imagen })
+                .Select(n => new { n.Id, n.ImagenRuta })
                 .FirstOrDefaultAsync(n => n.Id == id);
 
-            if (noticia?.Imagen == null || noticia.Imagen.Length == 0)
+            if (noticia == null || string.IsNullOrEmpty(noticia.ImagenRuta))
             {
-                return File("~/images/default-news.jpg", "image/jpeg");
+                var defaultPath = Path.Combine(_environment.WebRootPath, "images", "default-news.jpg");
+                var defaultImageBytes = await System.IO.File.ReadAllBytesAsync(defaultPath);
+                Response.Headers.Append("Cache-Control", "public,max-age=86400");
+                return File(defaultImageBytes, "image/jpg");
             }
 
-            Response.Headers.Append("Cache-Control", "public,max-age=86400");
+            var rutaFisica = Path.Combine(_environment.WebRootPath, noticia.ImagenRuta.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
 
-            return File(noticia.Imagen, "image/jpg");
+            if (!System.IO.File.Exists(rutaFisica))
+            {
+                var defaultPath = Path.Combine(_environment.WebRootPath, "images", "default-news.jpg");
+                var defaultImageBytes = await System.IO.File.ReadAllBytesAsync(defaultPath);
+                Response.Headers.Append("Cache-Control", "public,max-age=86400");
+                return File(defaultImageBytes, "image/jpg");
+            }
+
+            var imagenBytes = await System.IO.File.ReadAllBytesAsync(rutaFisica);
+            Response.Headers.Append("Cache-Control", "public,max-age=86400");
+            return File(imagenBytes, "image/jpg");
         }
     }
 }

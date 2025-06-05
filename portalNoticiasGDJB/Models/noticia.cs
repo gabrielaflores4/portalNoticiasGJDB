@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace portalNoticiasGDJB.Models
 {
-    [Table("Noticias")]
+    [Table("Noticia")]
     public class Noticia
     {
         [Key]
@@ -15,13 +15,15 @@ namespace portalNoticiasGDJB.Models
         [StringLength(255)]
         public string Titulo { get; set; }
 
-        public byte[] Imagen { get; set; }
+        [StringLength(500)]
+        public string ImagenRuta { get; set; }  
 
         [Required]
         public string Contenido { get; set; }
 
         [Required]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-ddTHH:mm:ss}", ApplyFormatInEditMode = true)]
         public DateTime FechaPublicacion { get; set; }
 
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
@@ -32,11 +34,18 @@ namespace portalNoticiasGDJB.Models
         [ForeignKey("UsuarioId")]
         public IdentityUser Usuario { get; set; }
 
+        [Column("id_categoria")]
+        public int? CategoriaId { get; set; }
+
+        [ForeignKey("CategoriaId")]
+        public Categoria Categoria { get; set; }
+
         [NotMapped]
         public IFormFile ArchivoImagen { get; set; }
 
-        [NotMapped]
-        public string TipoContenidoImagen { get; set; }
+        public ICollection<Comentario> Comentarios { get; set; }
+        public ICollection<Guardado> Guardados { get; set; }
+        public ICollection<Reaccion> Reacciones { get; set; }
     }
 }
 

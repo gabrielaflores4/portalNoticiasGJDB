@@ -2,131 +2,243 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using portalNoticiasGDJB.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace portalNoticiasGDJB.Controllers
 {
+    [Authorize]
     public class NoticiasController : Controller
     {
         private readonly AppDb _context;
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<NoticiasController> _logger;
+        private const string CarpetaImagenes = "imagenesNoticias";
 
-        public NoticiasController(AppDb context)
+        public NoticiasController(AppDb context, IWebHostEnvironment env, ILogger<NoticiasController> logger)
         {
             _context = context;
+            _env = env;
+            _logger = logger;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Noticias.Include(n => n.Usuario).ToListAsync());
+            var noticias = await _context.Noticias
+                .Include(n => n.Usuario)
+                .Include(n => n.Categoria)
+                .OrderByDescending(n => n.FechaPublicacion)
+                .ToListAsync();
+
+            return View(noticias);
         }
 
+        [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            ViewBag.Categorias = _context.Categorias.ToList();
+            return View(new Noticia
+            {
+                FechaPublicacion = DateTime.Now
+            });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("Id,Titulo,Contenido,FechaPublicacion,UsuarioId")] Noticia noticia,
+            [Bind("Id,Titulo,Contenido,FechaPublicacion,CategoriaId")] Noticia noticia,
             IFormFile archivoImagen)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (archivoImagen != null && archivoImagen.Length > 0)
+                if (ModelState.IsValid)
                 {
-                    using (var memoryStream = new MemoryStream())
+                    // Validar fecha de publicación
+                    if (noticia.FechaPublicacion < DateTime.Now.AddMinutes(-5))
                     {
-                        await archivoImagen.CopyToAsync(memoryStream);
-                        noticia.Imagen = memoryStream.ToArray();
+                        ModelState.AddModelError("FechaPublicacion", "La fecha de publicación no puede ser en el pasado");
+                        ViewBag.Categorias = _context.Categorias.ToList();
+                        return View(noticia);
                     }
+
+                    //Imagen
+                    if (archivoImagen != null && archivoImagen.Length > 0)
+                    {
+                        if (archivoImagen.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("ArchivoImagen", "El tamaño de la imagen no puede exceder 5MB");
+                            ViewBag.Categorias = _context.Categorias.ToList();
+                            return View(noticia);
+                        }
+
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var fileExtension = Path.GetExtension(archivoImagen.FileName).ToLower();
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("ArchivoImagen", "Solo se permiten archivos de imagen (JPG, JPEG, PNG, GIF)");
+                            ViewBag.Categorias = _context.Categorias.ToList();
+                            return View(noticia);
+                        }
+
+                        var uploadsFolder = Path.Combine(_env.WebRootPath, CarpetaImagenes);
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+
+                        var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await archivoImagen.CopyToAsync(fileStream);
+                        }
+
+                        noticia.ImagenRuta = $"/{CarpetaImagenes}/{uniqueFileName}";
+                    }
+
+                    noticia.FechaRegistro = DateTime.Now;
+                    noticia.UsuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                    _context.Add(noticia);
+                    await _context.SaveChangesAsync();
+
+                    TempData["MensajeExito"] = "Noticia creada exitosamente";
+                    return RedirectToAction(nameof(Index));
                 }
-
-                noticia.FechaRegistro = DateTime.Now;
-                noticia.UsuarioId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-                _context.Add(noticia);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al crear noticia");
+                TempData["MensajeError"] = "Ocurrió un error al crear la noticia";
+            }
+
+            ViewBag.Categorias = _context.Categorias.ToList();
             return View(noticia);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var noticia = await _context.Noticias.FindAsync(id);
-            if (noticia == null)
+            if (noticia == null) return NotFound();
+
+            if (noticia.UsuarioId != User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                !User.IsInRole("Administrador"))
             {
-                return NotFound();
+                return Forbid();
             }
+
+            ViewBag.Categorias = _context.Categorias.ToList();
             return View(noticia);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-            [Bind("Id,Titulo,Contenido,FechaPublicacion,FechaRegistro,UsuarioId")] Noticia noticia,
+            [Bind("Id,Titulo,Contenido,FechaPublicacion,CategoriaId,UsuarioId,FechaRegistro,ImagenRuta")] Noticia noticia,
             IFormFile archivoImagen)
         {
-            if (id != noticia.Id)
-            {
-                return NotFound();
-            }
+            if (id != noticia.Id) return NotFound();
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                if (ModelState.IsValid)
                 {
+                    var noticiaOriginal = await _context.Noticias.AsNoTracking()
+                        .FirstOrDefaultAsync(n => n.Id == id);
+
+                    if (noticiaOriginal.UsuarioId != User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                        !User.IsInRole("Administrador"))
+                    {
+                        return Forbid();
+                    }
+
+                    //Imagen
                     if (archivoImagen != null && archivoImagen.Length > 0)
                     {
-                        using (var memoryStream = new MemoryStream())
+                        if (archivoImagen.Length > 5 * 1024 * 1024)
                         {
-                            await archivoImagen.CopyToAsync(memoryStream);
-                            noticia.Imagen = memoryStream.ToArray();
+                            ModelState.AddModelError("ArchivoImagen", "El tamaño de la imagen no puede exceder 5MB");
+                            ViewBag.Categorias = _context.Categorias.ToList();
+                            return View(noticia);
                         }
+
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var fileExtension = Path.GetExtension(archivoImagen.FileName).ToLower();
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("ArchivoImagen", "Solo se permiten archivos de imagen (JPG, JPEG, PNG, GIF)");
+                            ViewBag.Categorias = _context.Categorias.ToList();
+                            return View(noticia);
+                        }
+
+                        var uploadsFolder = Path.Combine(_env.WebRootPath, CarpetaImagenes);
+                        var uniqueFileName = $"{Guid.NewGuid()}{fileExtension}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await archivoImagen.CopyToAsync(fileStream);
+                        }
+
+                        // Eliminar imagen anterior si existe
+                        if (!string.IsNullOrEmpty(noticia.ImagenRuta))
+                        {
+                            var oldImagePath = Path.Combine(_env.WebRootPath, noticia.ImagenRuta.TrimStart('/'));
+                            if (System.IO.File.Exists(oldImagePath))
+                                System.IO.File.Delete(oldImagePath);
+                        }
+
+                        noticia.ImagenRuta = $"/{CarpetaImagenes}/{uniqueFileName}";
                     }
                     else
                     {
-                        var noticiaExistente = await _context.Noticias.AsNoTracking()
-                            .FirstOrDefaultAsync(n => n.Id == id);
-                        noticia.Imagen = noticiaExistente?.Imagen;
+                        // Mantener la imagen existente
+                        noticia.ImagenRuta = noticiaOriginal.ImagenRuta;
                     }
 
                     _context.Update(noticia);
                     await _context.SaveChangesAsync();
+
+                    TempData["MensajeExito"] = "Noticia actualizada exitosamente";
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NoticiaExists(noticia.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                if (!_context.Noticias.Any(e => e.Id == noticia.Id))
+                    return NotFound();
+
+                _logger.LogError(ex, "Error de concurrencia al editar noticia");
+                TempData["MensajeError"] = "Ocurrió un error al actualizar la noticia";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al editar noticia");
+                TempData["MensajeError"] = "Ocurrió un error al actualizar la noticia";
+            }
+
+            ViewBag.Categorias = _context.Categorias.ToList();
             return View(noticia);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var noticia = await _context.Noticias
+                .Include(n => n.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (noticia == null)
+
+            if (noticia == null) return NotFound();
+
+            if (noticia.UsuarioId != User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                !User.IsInRole("Administrador"))
             {
-                return NotFound();
+                return Forbid();
             }
 
             return View(noticia);
@@ -137,14 +249,51 @@ namespace portalNoticiasGDJB.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var noticia = await _context.Noticias.FindAsync(id);
-            _context.Noticias.Remove(noticia);
-            await _context.SaveChangesAsync();
+            if (noticia == null) return NotFound();
+
+            try
+            {
+                if (noticia.UsuarioId != User.FindFirstValue(ClaimTypes.NameIdentifier) &&
+                    !User.IsInRole("Administrador"))
+                {
+                    return Forbid();
+                }
+
+                // Eliminar imagen asociada
+                if (!string.IsNullOrEmpty(noticia.ImagenRuta))
+                {
+                    var imagePath = Path.Combine(_env.WebRootPath, noticia.ImagenRuta.TrimStart('/'));
+                    if (System.IO.File.Exists(imagePath))
+                        System.IO.File.Delete(imagePath);
+                }
+
+                _context.Noticias.Remove(noticia);
+                await _context.SaveChangesAsync();
+
+                TempData["MensajeExito"] = "Noticia eliminada exitosamente";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al eliminar noticia");
+                TempData["MensajeError"] = "Ocurrió un error al eliminar la noticia";
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool NoticiaExists(int id)
+        [AllowAnonymous]
+        public async Task<IActionResult> Details(int? id)
         {
-            return _context.Noticias.Any(e => e.Id == id);
+            if (id == null) return NotFound();
+
+            var noticia = await _context.Noticias
+                .Include(n => n.Usuario)
+                .Include(n => n.Categoria)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (noticia == null) return NotFound();
+
+            return View(noticia);
         }
     }
 }
