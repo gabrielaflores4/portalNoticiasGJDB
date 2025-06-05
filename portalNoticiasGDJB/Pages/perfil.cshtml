@@ -68,16 +68,23 @@
             <div id="autor-content">
                 <h2>Tus Publicaciones</h2>
                 <div id="noticias-perfil" class="grid-noticias">
-                    <div class="publicaciones-usr">
-                        <h4>Primera tormenta invernal</h4>
-                        <img src="~/img/noticia1clima.jpg" alt="Noticia 1">
-                        <p>Autor: @userName</p>
-                    </div>
-                    <div class="publicaciones-usr">
-                        <h4>FDA prohíbe el colorante rojo número 3 en alimentos</h4>
-                        <img src="~/img/gomas.png" alt="Noticia 2">
-                        <p>Autor: @userName</p>
-                    </div>
+                    @if (Model.NoticiasUsuario != null && Model.NoticiasUsuario.Any())
+                    {
+                        @foreach (var noticia in Model.NoticiasUsuario)
+                        {
+                            <div class="publicaciones-usr">
+                                <h4>@noticia.Titulo</h4>
+                                <img src="@noticia.ImagenRuta" alt="Imagen de @noticia.Titulo" />
+                                <p><strong>Autor:</strong> @userName</p>
+                                <p><strong>Fecha:</strong> @noticia.FechaPublicacion.ToString("dd/MM/yyyy")</p>
+                                <p><strong>Categoría:</strong> @noticia.Categoria?.Nombre</p>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>No has publicado noticias aún.</p>
+                    }
                 </div>
             </div>
         }
@@ -97,6 +104,7 @@
         }
     </div>
 </div>
+
 
 @section Scripts {
     <script src="~/js/Noticias.js"></script>
