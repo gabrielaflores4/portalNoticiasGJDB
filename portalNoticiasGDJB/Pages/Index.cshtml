@@ -11,6 +11,12 @@
 <div class="contenedor1">
     <h1>Últimas Noticias</h1>
 
+    <form method="get" class="mb-4">
+        <input type="text" name="SearchString" value="@Request.Query["SearchString"]" placeholder="Buscar noticia por nombre..." class="form-control" />
+        <button type="submit" class="btn btn-primary mt-2">Buscar</button>
+    </form>
+
+
     @if (Model.Noticias == null || Model.Noticias.Count == 0)
     {
         <p>No hay noticias para mostrar.</p>
